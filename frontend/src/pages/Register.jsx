@@ -10,7 +10,6 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
 
-  // [e.target.name]: yخdem 3la kol input b esmou (name="email", name="password"...)
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
@@ -24,7 +23,7 @@ export default function Register() {
     return errs;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setServerError("");
 
@@ -32,7 +31,7 @@ export default function Register() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
-    const result = register({
+    const result = await register({
       name: form.name.trim(),
       email: form.email.trim().toLowerCase(),
       password: form.password,

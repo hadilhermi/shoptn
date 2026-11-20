@@ -17,7 +17,7 @@ export default function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     if (!form.email || !form.password) {
@@ -25,7 +25,7 @@ export default function Login() {
       return;
     }
 
-    const result = login({
+    const result = await login({
       email: form.email.trim().toLowerCase(),
       password: form.password,
     });

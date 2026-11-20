@@ -1,15 +1,53 @@
-import products from "../data/products";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// Nبدّlou shape mte3 MongoDB l shape eli el frontend ya3rafha
+function normalize(p) {
+  return {
+    id: p._id,
+    name: p.name,
+    price: p.price,
+    category: p.category,
+    emoji: p.image,
+    description: p.description,
+  };
+}
+
+// Fonction wa7da lkol el requests (GET, POST...), t9bal token ikhtiyari
+export async function request(path, { method = "GET", body, token } = {}) {
+  const headers = {};
+  if (body) headers["Content-Type"] = "application/json";
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  let res;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new Error("Impossible de contacter le serveur");
+  }
+
+  let data = null;
+  try {
+    data = await res.json();
+  } catch {
+    // réponse non JSON
+  }
+
+  if (!res.ok) {
+    throw new Error((data && data.message) || "Erreur serveur");
+  }
+  return data;
+}
 
 export async function getProducts() {
-  await delay(800);
-  return products;
+  const data = await request("/api/products");
+  return data.map(normalize);
 }
 
 export async function getProductById(id) {
-  await delay(500);
-  const product = products.find((p) => p.id === Number(id));
-  if (!product) throw new Error("Produit introuvable");
-  return product;
+  const data = await request(`/api/products/${id}`);
+  return normalize(data);
 }
