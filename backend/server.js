@@ -10,17 +10,16 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// ===== Routes =====
 app.get("/", (req, res) => {
   res.json({ message: "API ShopTN OK" });
 });
 
 app.get("/api/health", (req, res) => {
-  res.json({
-    status: "ok",
-    db: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
-    time: new Date().toISOString(),
-  });
+  res.json({ status: "ok", time: new Date().toISOString() });
 });
+
+app.use("/api/auth", require("./routes/auth"));
 
 app.get("/api/products", async (req, res) => {
   try {
@@ -33,14 +32,20 @@ app.get("/api/products", async (req, res) => {
 
 app.get("/api/products/:id", async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ message: "Produit introuvable" });
+    }
     const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: "Produit introuvable" });
+    if (!product) {
+      return res.status(404).json({ message: "Produit introuvable" });
+    }
     res.json(product);
   } catch (err) {
-    res.status(400).json({ message: "ID invalide" });
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
 
+// ===== Connexion MongoDB + démarrage =====
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
