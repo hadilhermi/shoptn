@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const Product = require("./models/Product");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,30 +19,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", require("./routes/auth"));
-
-app.get("/api/products", async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: "Erreur serveur" });
-  }
-});
-
-app.get("/api/products/:id", async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(404).json({ message: "Produit introuvable" });
-    }
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ message: "Produit introuvable" });
-    }
-    res.json(product);
-  } catch (err) {
-    res.status(500).json({ message: "Erreur serveur" });
-  }
-});
+app.use("/api/products", require("./routes/products"));
 
 // ===== Connexion MongoDB + démarrage =====
 mongoose
