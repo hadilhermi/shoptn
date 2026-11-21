@@ -21,6 +21,8 @@ export default function Navbar() {
           Panier {totalItems > 0 && <span className="badge">{totalItems}</span>}
         </NavLink>
 
+        {user?.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
+
         {user ? (
           <>
             <span className="nav-user">👤 {user.name}</span>
