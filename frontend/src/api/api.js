@@ -110,3 +110,7 @@ export async function updateOrderStatus(token, id, status) {
     body: { status },
   });
 }
+export async function getSimilarProducts(id) {
+  const data = await request(`/api/products/${id}/similar`);
+  return data.map((p) => ({ ...normalize(p), similarity: p.similarity }));
+}

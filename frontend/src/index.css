@@ -339,3 +339,8 @@ select.status {
   padding: 5px 10px;
 }
 .admin-table small { color: #64748b; }
+/* ===== Produits similaires ===== */
+.similar { margin-top: 40px; }
+.similar h2 { margin-bottom: 14px; }
+.similar-item { display: flex; flex-direction: column; gap: 6px; }
+.similar-score { color: #64748b; text-align: center; }

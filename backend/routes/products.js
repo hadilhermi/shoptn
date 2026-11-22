@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Product = require("../models/Product");
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
+const { similarProducts } = require("../utils/similarity");
 
 const router = express.Router();
 
@@ -26,6 +27,21 @@ router.get("/", async (req, res) => {
   try {
     const products = await Product.find();
     res.json(products);
+  } catch {
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+});
+// GET /api/products/:id/similar (public)
+router.get("/:id/similar", async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ message: "Produit introuvable" });
+    }
+    const all = await Product.find().lean();
+    const target = all.find((p) => String(p._id) === req.params.id);
+    if (!target) return res.status(404).json({ message: "Produit introuvable" });
+
+    res.json(similarProducts(target, all, 4));
   } catch {
     res.status(500).json({ message: "Erreur serveur" });
   }

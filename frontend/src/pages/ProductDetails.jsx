@@ -1,13 +1,15 @@
 import { useParams, Link } from "react-router-dom";
-import { getProductById } from "../api/api";
+import { getProductById, getSimilarProducts } from "../api/api";
 import useFetch from "../hooks/useFetch";
 import { useCart } from "../context/CartContext";
 import Loader from "../components/Loader";
+import ProductCard from "../components/ProductCard";
 
 export default function ProductDetails() {
   const { id } = useParams();
   const { addToCart } = useCart();
   const { data: product, loading, error } = useFetch(getProductById, id);
+  const { data: similar } = useFetch(getSimilarProducts, id);
 
   if (loading) return <Loader text="Chargement du produit..." />;
 
@@ -21,18 +23,34 @@ export default function ProductDetails() {
   }
 
   return (
-    <div className="details">
-      <div className="details-emoji">{product.emoji}</div>
-      <div>
-        <span className="card-category">{product.category}</span>
-        <h1>{product.name}</h1>
-        <p className="card-price">{product.price} DT</p>
-        <p>{product.description}</p>
-        <button className="btn btn-green" onClick={() => addToCart(product)}>
-          Ajouter au panier
-        </button>{" "}
-        <Link to="/" className="btn">← Retour</Link>
+    <div>
+      <div className="details">
+        <div className="details-emoji">{product.emoji}</div>
+        <div>
+          <span className="card-category">{product.category}</span>
+          <h1>{product.name}</h1>
+          <p className="card-price">{product.price} DT</p>
+          <p>{product.description}</p>
+          <button className="btn btn-green" onClick={() => addToCart(product)}>
+            Ajouter au panier
+          </button>{" "}
+          <Link to="/" className="btn">← Retour</Link>
+        </div>
       </div>
+
+      {similar && similar.length > 0 && (
+        <section className="similar">
+          <h2>🤖 Produits similaires</h2>
+          <div className="grid">
+            {similar.map((p) => (
+              <div key={p.id} className="similar-item">
+                <ProductCard product={p} />
+                <small className="similar-score">{p.similarity}% similaire</small>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
