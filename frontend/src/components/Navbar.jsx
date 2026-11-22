@@ -27,6 +27,7 @@ export default function Navbar() {
           <>
             <NavLink to="/orders">Commandes</NavLink>
             {user.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
+            {user.role === "admin" && <NavLink to="/admin/orders">Gestion</NavLink>}
             <span className="nav-user">👤 {user.name}</span>
             <button className="nav-logout" onClick={handleLogout}>
               Déconnexion

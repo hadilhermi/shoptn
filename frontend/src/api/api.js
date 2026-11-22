@@ -99,3 +99,14 @@ export async function createOrder(token, cart) {
 export async function getMyOrders(token) {
   return request("/api/orders/mine", { token });
 }
+export async function getAllOrders(token) {
+  return request("/api/orders", { token });
+}
+
+export async function updateOrderStatus(token, id, status) {
+  return request(`/api/orders/${id}/status`, {
+    method: "PATCH",
+    token,
+    body: { status },
+  });
+}
