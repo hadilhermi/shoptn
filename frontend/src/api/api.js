@@ -85,3 +85,17 @@ export async function updateProduct(token, id, product) {
 export async function deleteProduct(token, id) {
   return request(`/api/products/${id}`, { method: "DELETE", token });
 }
+// ===== Commandes =====
+export async function createOrder(token, cart) {
+  return request("/api/orders", {
+    method: "POST",
+    token,
+    body: {
+      items: cart.map((i) => ({ productId: i.id, quantity: i.quantity })),
+    },
+  });
+}
+
+export async function getMyOrders(token) {
+  return request("/api/orders/mine", { token });
+}

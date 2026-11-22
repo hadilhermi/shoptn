@@ -20,6 +20,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/products", require("./routes/products"));
+app.use("/api/orders", require("./routes/orders"));
 
 // ===== Connexion MongoDB + démarrage =====
 mongoose

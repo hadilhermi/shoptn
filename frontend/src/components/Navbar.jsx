@@ -15,18 +15,22 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <NavLink to="/" className="logo">ShopTN</NavLink>
+
       <div className="nav-links">
         <NavLink to="/">Accueil</NavLink>
+
         <NavLink to="/cart">
           Panier {totalItems > 0 && <span className="badge">{totalItems}</span>}
         </NavLink>
 
-        {user?.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
-
         {user ? (
           <>
+            <NavLink to="/orders">Commandes</NavLink>
+            {user.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
             <span className="nav-user">👤 {user.name}</span>
-            <button className="nav-logout" onClick={handleLogout}>Déconnexion</button>
+            <button className="nav-logout" onClick={handleLogout}>
+              Déconnexion
+            </button>
           </>
         ) : (
           <>
