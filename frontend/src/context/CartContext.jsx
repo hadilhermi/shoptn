@@ -63,6 +63,8 @@ export function CartProvider({ children }) {
 }
 
 // 3. Custom hook: bech ykoun el istiʿmal ashal
+// Context modules intentionally export both a provider component and its hook.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCart() {
   return useContext(CartContext);
 }
