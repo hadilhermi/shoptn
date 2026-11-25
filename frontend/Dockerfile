@@ -1,13 +1,15 @@
-FROM node:22-alpine AS build
+FROM nginxinc/nginx-unprivileged:stable
 
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
-RUN npm run build
-
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
+USER root
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp /tmp/uwsgi_temp /tmp/scgi_temp \
+    && chown -R nginx:nginx /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp /tmp/uwsgi_temp /tmp/scgi_temp
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx . /usr/share/nginx/html/
+USER nginx
+EXPOSE 8080
+HEALTHCHECK --interval=20s --timeout=3s --retries=3 CMD curl --fail --silent http://127.0.0.1:8080/health || exit 1
+CMD ["nginx", "-g", "daemon off;"]

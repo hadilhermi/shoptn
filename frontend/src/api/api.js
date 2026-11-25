@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 // Nبدّlou shape mte3 MongoDB l shape eli el frontend ya3rafha
 function normalize(p) {

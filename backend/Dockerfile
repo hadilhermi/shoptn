@@ -1,12 +1,20 @@
-FROM node:22-alpine
+FROM node:22-bookworm-slim AS dependencies
+WORKDIR /app
+COPY package*.json ./
+RUN if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
 
+FROM node:22-bookworm-slim AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-COPY . .
-
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system app \
+    && useradd --system --gid app --home-dir /app app \
+    && chown app:app /app
+COPY --from=dependencies --chown=app:app /app/node_modules ./node_modules
+COPY --chown=app:app . .
+USER app
 EXPOSE 5000
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
