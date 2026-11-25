@@ -9,7 +9,7 @@ WORKDIR /app
 RUN apt-get update \
     && apt-get upgrade -y --no-install-recommends \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/* /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
     && groupadd --system app \
     && useradd --system --gid app --home-dir /app app \
     && chown app:app /app
