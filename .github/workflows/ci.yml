@@ -26,11 +26,24 @@ jobs:
       - run: npm run build
 
   backend:
-    name: Backend syntax and production dependency audit
+    name: Backend syntax, integration tests, and production audit
     runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:8
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         working-directory: backend
+    env:
+      MONGO_URI: mongodb://127.0.0.1:27017/shoptn_test
+      JWT_SECRET: test-only-secret-not-for-production
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -41,4 +54,5 @@ jobs:
       - run: npm ci
       - name: Check JavaScript syntax
         run: find . -name '*.js' -not -path './node_modules/*' -print0 | xargs -0 -n1 node --check
+      - run: npm test
       - run: npm audit --omit=dev
